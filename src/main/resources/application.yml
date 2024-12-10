@@ -1,0 +1,32 @@
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #日志
+    map-underscore-to-camel-case: true  #开启驼峰命名
+
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/itWorker
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: 8080
+
+file:
+  upload-dir: C:\Users\31833\Desktop\ItWorker\File
+
+#springdoc:
+#  swagger-ui:
+#    path: /docs/index.html    # 设置路径
+#    enabled: true             # 开启swagger界面
+#  api-docs:
+#      # OpenAPI的路径描述，默认路径:/v3/api-docs, 通过http://localhost:8080/docs/api访问文档描述
+#    path: /docs/api # Yaml格式API，默认为Json
+#      # 开启api-docs
+#    enabled: true
