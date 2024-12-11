@@ -6,14 +6,17 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.training.itworker.Util.JwtTokenUtils;
 import com.training.itworker.common.MyException;
 import com.training.itworker.common.PassToken;
 import com.training.itworker.common.ResponseEnum;
 import com.training.itworker.entity.User;
 import com.training.itworker.service.impl.UserServiceImpl;
+import jakarta.annotation.Nonnull;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -26,6 +29,9 @@ import java.lang.reflect.Method;
 public class JwtInterceptor implements HandlerInterceptor {
     @Resource
     private UserServiceImpl userService;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 处理器的预处理回调
@@ -41,8 +47,8 @@ public class JwtInterceptor implements HandlerInterceptor {
      *
      * @param handler 响应的处理器，返回true表示流程继续，返回false表示流程中断
      */
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String token = request.getHeader("token");
+    public boolean preHandle(HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler) throws Exception {
+        String token = request.getHeader("Authorization");
         if(!(handler instanceof HandlerMethod handlerMethod)){
             return true;
         }
@@ -56,8 +62,8 @@ public class JwtInterceptor implements HandlerInterceptor {
             }
         }
 
-        // 查看是否存有这个token
-        if(CharSequenceUtil.isBlank(token)) {
+        // 再请求中查看是否存有这个token
+        if(CharSequenceUtil.isBlank(token) || Boolean.TRUE.equals(stringRedisTemplate.hasKey("blacklist:" + token))) {
             throw new MyException(ResponseEnum.TOKEN_EX.getCode(), ResponseEnum.TOKEN_EX.getMsg());
         }
 
@@ -74,9 +80,14 @@ public class JwtInterceptor implements HandlerInterceptor {
         if(user == null) {
             throw new MyException(ResponseEnum.TOKEN_EX.getCode(), ResponseEnum.TOKEN_EX.getMsg());
         }
+        /* 第一次验证token，从redis中找 **/
+        String redisToken = stringRedisTemplate.opsForValue().get(user.getName());
+        if (redisToken == null || !redisToken.equals(token)) {
+            throw new MyException(ResponseEnum.TOKEN_EX.getCode(), ResponseEnum.TOKEN_EX.getMsg());
+        }
 
-        // 验证Token
-        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(user.getPassword()))
+        // 第二次验证Token
+        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(JwtTokenUtils.SECRET_KEY))
                 // 容忍token过期时间，类似与超时后能允许在超会
                                      .acceptExpiresAt(0)
                                      .build();

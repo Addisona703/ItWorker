@@ -34,12 +34,16 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/**")
+                .addPathPatterns("/**") // 拦截所有请求
                 .excludePathPatterns(
-                        "/v3/api-docs/**",      // 放行 OpenAPI 数据
-                        "/swagger-ui/**",       // 放行 Swagger 静态资源
-                        "/swagger-ui.html",     // 放行 Swagger UI 页面
-                        "/favicon.ico"          // 可选，放行 Swagger 默认的图标
+                        // OpenAPI 文档和 Swagger UI 相关资源
+                        "/docs/index.html",
+                        "/docs/api/**",
+                        "/favicon.ico",
+                        // 静态资源目录放行（如有）
+                        "/static/**",
+                        "/public/**"
                 );
     }
+
 }
