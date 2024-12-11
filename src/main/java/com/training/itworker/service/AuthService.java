@@ -8,5 +8,5 @@ public interface AuthService {
 
     R<String> register(User user);
 
-    void logout();
+    R<String> logout(String token);
 }

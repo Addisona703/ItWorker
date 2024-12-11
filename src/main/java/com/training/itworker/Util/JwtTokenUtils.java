@@ -13,10 +13,10 @@ import java.util.Date;
 public class JwtTokenUtils {
 
     // 签名密钥
-    private static final String SECRET_KEY = "123456";
+    public static final String SECRET_KEY = "123456";
 
     // Token 有效期
-    private static final long EXPIRATION_TIME = 2 * 24 * 60 * 60 * 1000;
+    public static final long EXPIRATION_TIME = 2 * 24 * 60 * 60 * 1000;
 
     /** 定义私有的构造函数方式外部创建JwtTokenUtils的实例 **/
     private JwtTokenUtils() {

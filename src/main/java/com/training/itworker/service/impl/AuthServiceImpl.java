@@ -10,13 +10,19 @@ import com.training.itworker.entity.User;
 import com.training.itworker.mapper.UserMapper;
 import com.training.itworker.service.AuthService;
 import jakarta.annotation.Resource;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
 
 @Service("AuthService")
 public class AuthServiceImpl implements AuthService {
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * @param name
@@ -51,6 +57,7 @@ public class AuthServiceImpl implements AuthService {
 
         if(result.verified){
             String token = JwtTokenUtils.getToken(String.valueOf(user.getId()));
+            stringRedisTemplate.opsForValue().set(user.getName(), token, Duration.ofDays(2)); // 将token存到redis，后面这个日期需要一个特定的类型
             return R.ok(token, "登录成功！");
         } else {
             throw new MyException(401, "密码错误，请重新输入！");
@@ -90,7 +97,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void logout() {
-
+    public R<String> logout(String token) {
+        // 设置 token 到 Redis 黑名单，过期时间与 token 的有效期一致
+        stringRedisTemplate.opsForValue().set("blacklist:" + token, "expired", JwtTokenUtils.EXPIRATION_TIME);
+        return R.ok("登出成功！");
     }
 }

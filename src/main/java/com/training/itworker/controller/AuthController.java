@@ -7,6 +7,7 @@ import com.training.itworker.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -49,9 +50,9 @@ public class AuthController {
     /** 登出功能 **/
     @PostMapping("/logout")
     @Operation(summary = "登出功能")
-    public String logout() {
+    public R<String> logout(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
         // 处理用户登出逻辑
-        authService.logout();
-        return "Logged out successfully";
+        return authService.logout(token);
     }
 }

@@ -14,6 +14,21 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+      enabled: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0                 # 使用的数据库索引
+      connect-timeout: 1800000    # 连接超时时间
+      password: "ws925"           # 设置密码
+      lettuce:
+        pool:
+          max-wait: -1            # 最大阻塞等待时间，负数表示没有限制
+          max-idle: 5             # 连接池最大空闲连接
+          min-idle: 0             # 最小空闲连接
+          max-active: 20          # 最大连接数，负数表示没有限制
+        shutdown-timeout: 100ms   # 关闭连接池时的超时时间
 
 server:
   port: 8080
@@ -21,12 +36,10 @@ server:
 file:
   upload-dir: C:\Users\31833\Desktop\ItWorker\File
 
-#springdoc:
-#  swagger-ui:
-#    path: /docs/index.html    # 设置路径
-#    enabled: true             # 开启swagger界面
-#  api-docs:
-#      # OpenAPI的路径描述，默认路径:/v3/api-docs, 通过http://localhost:8080/docs/api访问文档描述
-#    path: /docs/api # Yaml格式API，默认为Json
-#      # 开启api-docs
-#    enabled: true
+springdoc:
+  swagger-ui:   # swagger-ui界面
+    path: /docs/index.html
+    enabled: true
+  api-docs:     # OpenAPI文档
+    path: /docs/api
+    enabled: true
