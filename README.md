@@ -1,9 +1,5 @@
-<div style="text-align: center; margin-top: 20px;">
-  <h1 style="color: white; font-size: 36px; font-weight: bold; margin: 0;">
-    ItWorker
-  </h1>
-  <p style="color: white; font-size: 16px; margin: 5px 0;">Java Web 实训</p>
-</div>
+# ItWorker
+##### 这是一个接单的web应用
 
 ---
 

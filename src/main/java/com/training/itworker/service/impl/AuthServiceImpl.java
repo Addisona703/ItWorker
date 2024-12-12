@@ -89,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             userMapper.insert(user);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             throw new MyException(ResponseEnum.ERROR.getCode(), "注册失败，服务器内部错误！");
         }
 

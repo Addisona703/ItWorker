@@ -21,7 +21,7 @@ public class OpenApiConfig {
                                 https://example.com""")) // 设置 API 的许可证信息，包括许可证名称和 URL
                         .contact(new Contact()
                                 .name("KEYKB")
-                                .url("https://codeforces.com/profile/KEYKB")
+                                .url("https://github.com/Addisona703/ItWorker")
                                 .email("3183389935@qq.com")
                         )
                 );
