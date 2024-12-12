@@ -1,5 +1,6 @@
 package com.training.itworker.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.training.itworker.common.MyException;
 import com.training.itworker.common.R;
@@ -32,7 +33,10 @@ public class UserController {
     @GetMapping("/queryById/{id}")
     @Operation(summary = "查找指定id的用户")
     public R<String> getById(@PathVariable("id") Integer id) {
-        User user = userService.getById(id);
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", id);
+        queryWrapper.select("name", "image", "statement");
+        User user = userService.getOne(queryWrapper);
         if(user == null) {
             throw new MyException(ResponseEnum.ERROR.getCode(), "该用户不存在！");
         }
@@ -73,14 +77,14 @@ public class UserController {
     }
 
     /** 更新简介 **/
-    @PostMapping("/updateStatement")
-    @Operation(summary = "更新简介")
-    public R<String> updateStatement(@RequestBody User user) {
-        boolean check = userService.update(user, new UpdateWrapper<User>().eq("id", user.getId()));
-        if(!check) {
-            throw new MyException(ResponseEnum.FAIL.getCode(), "更新失败！");
-        }
-
-        return R.ok("更新成功！");
-    }
+//    @PostMapping("/updateStatement")
+//    @Operation(summary = "更新简介")
+//    public R<String> updateStatement(@RequestBody User user) {
+//        boolean check = userService.update(user, new UpdateWrapper<User>().eq("id", user.getId()));
+//        if(!check) {
+//            throw new MyException(ResponseEnum.FAIL.getCode(), "更新失败！");
+//        }
+//
+//        return R.ok("更新成功！");
+//    }
 }

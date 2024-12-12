@@ -19,7 +19,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public R<String> getByName(String name) {
-        User user = userMapper.selectOne(new QueryWrapper<User>().eq("name", name));
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("name", name);
+        queryWrapper.select("name", "image", "statement");
+        User user = userMapper.selectOne(queryWrapper);
 
         if(user == null) {
             throw new MyException(ResponseEnum.ERROR.getCode(), "该用户不存在！");

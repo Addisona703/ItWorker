@@ -1,5 +1,6 @@
 package com.training.itworker.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.training.itworker.common.MyException;
 import com.training.itworker.common.R;
 import com.training.itworker.common.ResponseEnum;
@@ -43,14 +44,14 @@ public class ArticleController {
     }
 
     /** 根据标题名查找文章 **/
-    @PostMapping("/updateName")
+    @GetMapping("/findByName")
     @Operation(summary = "获取指定名称的文章")
-    public R<String> updateName(@RequestBody Article article) {
-        boolean isSuccess = articleService.updateById(article);
-        if(!isSuccess) {
+    public R<Article> findByName(@RequestParam String name) {
+        Article article = articleService.getOne(new QueryWrapper<Article>().eq("name", name));
+        if(article == null) {
             throw new MyException(ResponseEnum.FAIL);
         }
-        return R.ok("更新成功！");
+        return R.ok(article);
     }
 
     /** 更新文章内容 **/
@@ -62,5 +63,16 @@ public class ArticleController {
             throw new MyException(ResponseEnum.FAIL);
         }
         return R.ok("更新成功！");
+    }
+
+    /** 新增文章 **/
+    @PostMapping("/addProperty")
+    @Operation(summary = "插入文章")
+    public R<String> addProperty(@RequestBody Article article) {
+        boolean isSuccess = articleService.save(article);
+        if(!isSuccess) {
+            throw new MyException(ResponseEnum.FAIL);
+        }
+        return R.ok("插入成功！");
     }
 }
